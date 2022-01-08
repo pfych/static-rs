@@ -1,11 +1,11 @@
 use std::fs::{DirEntry, File};
 use chrono::{Local, NaiveDateTime};
 use std::ops::Sub;
-use crate::config;
+use crate::{config, utils};
 use simple_xml_builder::XMLElement;
-use std::{fs, io};
-use std::io::BufRead;
+use std::{fs};
 use regex::Regex;
+use crate::utils::get_blogs;
 
 fn get_file_date(file_entry: DirEntry, config: &config::Config) -> std::io::Result<String> {
   let file_name = file_entry.file_name().into_string().unwrap();
@@ -52,12 +52,17 @@ pub(crate) fn build_rss(config: &config::Config) -> std::io::Result<()> {
   channel.add_child(atom);
 
 
-  for entry in fs::read_dir(&config.blog_location)? {
-    let file_entry = entry?;
+  for entry in get_blogs(&config) {
+    let file_entry = entry;
     let file_name = file_entry.file_name().into_string().unwrap();
     let file_path = file_entry.path();
 
     if file_name.contains(".md") {
+      let draft = utils::get_metadata(&file_path, "draft");
+      if draft.len() != 0 {
+        continue;
+      }
+
       let mut rss_item = XMLElement::new("item");
 
       let mut guid = XMLElement::new("guid");
@@ -66,17 +71,7 @@ pub(crate) fn build_rss(config: &config::Config) -> std::io::Result<()> {
       rss_item.add_child(guid);
 
       let mut title = XMLElement::new("title");
-      let md_file = File::open(&file_path).unwrap();
-      let md_lines = io::BufReader::new(md_file);
-      let mut title_val = String::from("New post");
-      for (_i, line) in md_lines.lines().enumerate() {
-        let line = line.unwrap();
-        if line.contains("title:") {
-          title_val = line.replace("title: ", "");
-          break;
-        }
-      }
-      title.add_text(title_val);
+      title.add_text(utils::get_metadata(&file_path, "title"));
       rss_item.add_child(title);
 
       let mut link = XMLElement::new("link");

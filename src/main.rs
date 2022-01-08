@@ -4,6 +4,7 @@ mod config;
 mod images;
 mod rss;
 mod blogs;
+mod utils;
 
 fn build_out_structure() {
   println!("Building output structure");
@@ -17,6 +18,7 @@ fn main() {
 
   build_out_structure();
   blogs::build_blogs(&config).unwrap();
+  blogs::build_index(&config).unwrap();
   rss::build_rss(&config).unwrap();
   images::build_images(config).unwrap();
 }

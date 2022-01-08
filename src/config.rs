@@ -3,6 +3,7 @@ use std::{env, fs};
 pub(crate) struct Config {
   pub blog_location: String,
   pub blog_template: String,
+  pub index_template: String,
   pub image_location: String,
   pub url: String,
   pub author: String,
@@ -22,6 +23,7 @@ println!("Running with following config:\n{}\n", json);
 let config: Config = Config {
   blog_location: json.get("blog_location").unwrap().as_str().unwrap().to_string(),
   blog_template: json.get("blog_template").unwrap().as_str().unwrap().to_string(),
+  index_template: json.get("index_template").unwrap().as_str().unwrap().to_string(),
   image_location:  json.get("image_location").unwrap().as_str().unwrap().to_string(),
   author:  json.get("author").unwrap().as_str().unwrap().to_string(),
   url:  json.get("url").unwrap().as_str().unwrap().to_string(),
