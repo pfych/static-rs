@@ -17,6 +17,6 @@ fn main() {
 
   build_out_structure();
   blogs::build_blogs(&config).unwrap();
-  images::build_images(&config).unwrap();
   rss::build_rss(&config).unwrap();
+  images::build_images(config).unwrap();
 }
