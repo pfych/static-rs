@@ -5,14 +5,10 @@ use std::path::{PathBuf, Path};
 use pandoc::PandocOption::Template;
 use image::imageops::FilterType;
 use regex::Regex;
-use std::process::Command;
-use pandoc::InputFormat::Commonmark;
 use chrono::prelude::*;
-use chrono::Duration;
 use std::ops::Sub;
 use std::fs::{DirEntry, File};
 use simple_xml_builder::XMLElement;
-use std::io::Write;
 
 struct Config {
   blog_location: String,
@@ -125,7 +121,7 @@ fn get_file_date(file_entry: DirEntry) -> std::io::Result<String> {
 fn build_rss(config: &Config) -> std::io::Result<()> {
   println!("Building rss");
 
-  let mut rss_file = File::create("./out/rss.xml")?;
+  let rss_file = File::create("./out/rss.xml")?;
   let mut rss_element = XMLElement::new("rss");
   rss_element.add_attribute("version", "2.0");
   rss_element.add_attribute("xmlns:atom", "http://www.w3.org/2005/Atom");
@@ -154,7 +150,6 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
   for entry in fs::read_dir(&config.blog_location)? {
     let file_entry = entry?;
     let file_name = file_entry.file_name().into_string().unwrap();
-    let file_path = file_entry.path();
 
     if file_name.contains(".md") {
       let mut rss_item = XMLElement::new("item");
@@ -169,11 +164,21 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
       rss_item.add_child(title);
 
       let mut link = XMLElement::new("link");
-      link.add_text(format!("https://pfy.ch/blog/{}", &file_name.replace(".md", ".html")));
+      link.add_text(format!("https://pfy.ch/blog/{}", &file_name.replace("-write.md", ".html")));
       rss_item.add_child(link);
 
       let mut description = XMLElement::new("description");
-      description.add_text("Description");
+
+      let file_content = fs::read_to_string(format!("./out/blog/{}", &file_name.replace("-write.md", ".html"))).unwrap().replace("\n", "");
+      let remove_head_regex = Regex::new("^.*</h1> ").unwrap();
+      let remove_trail = Regex::new("</div></body></html>").unwrap();
+      description.add_text(format!("<![CDATA[{}]]>", remove_head_regex.replace(
+        remove_trail.replace_all(
+          &file_content,
+          ""
+        ).as_ref(),
+        "")
+      ));
       rss_item.add_child(description);
 
       let mut author = XMLElement::new("author");
@@ -189,7 +194,7 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
   }
 
   rss_element.add_child(channel);
-  rss_element.write(rss_file);
+  rss_element.write(rss_file).unwrap();
 
   Ok(())
 }
