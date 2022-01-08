@@ -171,17 +171,19 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
 
       let file_content = fs::read_to_string(format!("./out/blog/{}", &file_name.replace("-write.md", ".html"))).unwrap().replace("\n", "");
       let remove_head_regex = Regex::new("^.*</h1> ").unwrap();
-      let remove_trail = Regex::new("</div></body></html>").unwrap();
+      let remove_trail_regex = Regex::new("</div></body></html>").unwrap();
       let fix_images_regex = Regex::new("<img src=\".").unwrap();
-      description.add_text(format!("<![CDATA[{}]]>", fix_images_regex.replace_all(
+
+      description.add_text(format!("{}", fix_images_regex.replace_all(
         remove_head_regex.replace(
-          remove_trail.replace_all(
+          remove_trail_regex.replace_all(
             &file_content,
             "",
           ).as_ref(),
           "").as_ref(),
         "<img src=\"https://pfy.ch/blog",
       )));
+
       rss_item.add_child(description);
 
       let mut author = XMLElement::new("author");
