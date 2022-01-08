@@ -1,5 +1,4 @@
-use dotenv::dotenv;
-use std::env;
+use std::{env, fs};
 
 pub(crate) struct Config {
   pub blog_location: String,
@@ -11,34 +10,23 @@ pub(crate) struct Config {
 }
 
 pub(crate) fn load_env() -> Config {
-  dotenv().ok();
+  let file = fs::File::open(match env::var("STATIC_RS_CONFIG") {
+    Ok(val) => val,
+    Err(_e) => String::from("./config.json")
+  }).expect("file should open read only");
 
-  let config: Config = Config {
-    blog_location: match env::var("BLOG_LOCATION") {
-      Ok(val) => val,
-      Err(_e) => String::from("")
-    },
-    blog_template: match env::var("BLOG_TEMPLATE") {
-      Ok(val) => val,
-      Err(_e) => String::from("")
-    },
-    image_location: match env::var("IMAGE_LOCATION") {
-      Ok(val) => val,
-      Err(_e) => String::from("")
-    },
-    author: match env::var("AUTHOR") {
-      Ok(val) => val,
-      Err(_e) => String::from("")
-    },
-    url: match env::var("URL") {
-      Ok(val) => val,
-      Err(_e) => String::from("")
-    },
-    file_suffix: match env::var("FILE_SUFFIX") {
-      Ok(val) => val,
-      Err(_e) => String::from("")
-    }
-  };
+let json: serde_json::Value = serde_json::from_reader(file).expect("File should be valid JSON");
+
+println!("Running with following config:\n{}\n", json);
+
+let config: Config = Config {
+  blog_location: json.get("blog_location").unwrap().as_str().unwrap().to_string(),
+  blog_template: json.get("blog_template").unwrap().as_str().unwrap().to_string(),
+  image_location:  json.get("image_location").unwrap().as_str().unwrap().to_string(),
+  author:  json.get("author").unwrap().as_str().unwrap().to_string(),
+  url:  json.get("url").unwrap().as_str().unwrap().to_string(),
+  file_suffix:  json.get("file_suffix").unwrap().as_str().unwrap().to_string()
+};
 
   return config;
 }
