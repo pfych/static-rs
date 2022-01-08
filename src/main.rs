@@ -15,6 +15,8 @@ struct Config {
   blog_location: String,
   blog_template: String,
   image_location: String,
+  url: String,
+  author: String
 }
 
 fn resize(in_path: &str, out_path: &str, width: u32) {
@@ -37,6 +39,14 @@ fn load_env() -> Config {
       Err(_e) => String::from("")
     },
     image_location: match env::var("IMAGE_LOCATION") {
+      Ok(val) => val,
+      Err(_e) => String::from("")
+    },
+    author: match env::var("AUTHOR") {
+      Ok(val) => val,
+      Err(_e) => String::from("")
+    },
+    url: match env::var("URL") {
       Ok(val) => val,
       Err(_e) => String::from("")
     },
@@ -134,7 +144,7 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
   channel.add_child(title);
 
   let mut link = XMLElement::new("link");
-  link.add_text("https://pfy.ch");
+  link.add_text(&config.url);
   channel.add_child(link);
 
   let mut description = XMLElement::new("description");
@@ -142,7 +152,7 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
   channel.add_child(description);
 
   let mut atom = XMLElement::new("atom:link");
-  atom.add_attribute("href", "https://pfy.ch/rss.xml");
+  atom.add_attribute("href", format!("{}/rss.xml", &config.url));
   atom.add_attribute("rel", "self");
   atom.add_attribute("type", "application/rss+xml");
   channel.add_child(atom);
@@ -176,7 +186,7 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
       rss_item.add_child(title);
 
       let mut link = XMLElement::new("link");
-      link.add_text(format!("https://pfy.ch/blog/{}", &file_name.replace("-write.md", ".html")));
+      link.add_text(format!("{}/blog/{}", &config.url, &file_name.replace("-write.md", ".html")));
       rss_item.add_child(link);
 
       let mut description = XMLElement::new("description");
@@ -193,13 +203,13 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
             "",
           ).as_ref(),
           "").as_ref(),
-        "<img src=\"https://pfy.ch/blog",
+        format!("<img src=\"{}/blog", &config.url),
       )));
 
       rss_item.add_child(description);
 
       let mut author = XMLElement::new("author");
-      author.add_text("pfych");
+      author.add_text(&config.author);
       rss_item.add_child(author);
 
       let mut pub_date = XMLElement::new("pubDate");
