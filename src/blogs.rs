@@ -52,9 +52,9 @@ pub(crate) fn build_index(config: &config::Config) -> std::io::Result<()> {
       if draft.len() != 0 { continue };
 
       let title = utils::get_metadata(&file_path, "title");
-      let url = format!("{}/blogs/{}.html", &config.url, file_name.replace(&config.file_suffix, ""));
+      let url = format!("{}/blog/{}.html", &config.url, file_name.replace(&config.file_suffix, ""));
 
-      toc.push(format!("<a href=\"{}\">{}</a>", url, title))
+      toc.push(format!("<a href=\"{}\">{} - {}</a>", url, file_name.replace(&config.file_suffix, ""), title))
     }
   }
 
