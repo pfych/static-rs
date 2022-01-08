@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use std::{fs, env};
+use std::{fs, env, io};
 use pandoc::OutputKind;
 use std::path::{PathBuf, Path};
 use pandoc::PandocOption::Template;
@@ -9,6 +9,7 @@ use chrono::prelude::*;
 use std::ops::Sub;
 use std::fs::{DirEntry, File};
 use simple_xml_builder::XMLElement;
+use std::io::BufRead;
 
 struct Config {
   blog_location: String,
@@ -150,6 +151,7 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
   for entry in fs::read_dir(&config.blog_location)? {
     let file_entry = entry?;
     let file_name = file_entry.file_name().into_string().unwrap();
+    let file_path = file_entry.path();
 
     if file_name.contains(".md") {
       let mut rss_item = XMLElement::new("item");
@@ -160,7 +162,17 @@ fn build_rss(config: &Config) -> std::io::Result<()> {
       rss_item.add_child(guid);
 
       let mut title = XMLElement::new("title");
-      title.add_text("Example");
+      let md_file = File::open(&file_path).unwrap();
+      let md_lines = io::BufReader::new(md_file);
+      let mut title_val = String::from("New post");
+      for (_i, line) in md_lines.lines().enumerate() {
+        let line = line.unwrap();
+        if line.contains("title:") {
+          title_val = line.replace("title: ", "");
+          break;
+        }
+      }
+      title.add_text(title_val);
       rss_item.add_child(title);
 
       let mut link = XMLElement::new("link");
