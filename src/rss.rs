@@ -7,14 +7,14 @@ use std::{fs, io};
 use std::io::BufRead;
 use regex::Regex;
 
-fn get_file_date(file_entry: DirEntry) -> std::io::Result<String> {
+fn get_file_date(file_entry: DirEntry, config: &config::Config) -> std::io::Result<String> {
   let file_name = file_entry.file_name().into_string().unwrap();
 
   let edit_time_unix = Local::now().timestamp().sub(file_entry.metadata()?.modified()?.elapsed().unwrap().as_secs() as i64);
   let edit_time_native = NaiveDateTime::from_timestamp(edit_time_unix, 0);
   let edit_time = edit_time_native.format("%H:%M:%S +1000").to_string();
 
-  let timestamp = [&file_name.replace("-write.md", "").replace("-", " "), "00:00:00"].join(" ");
+  let timestamp = [&file_name.replace(&config.file_suffix, "").replace("-", " "), "00:00:00"].join(" ");
   let create_date = match NaiveDateTime::parse_from_str(&timestamp, "%y %m %d %H:%M:%S") {
     Ok(time) => time.format("%a, %d %b %Y").to_string(),
     Err(e) => ["Err", &e.to_string()].join(" ")
@@ -85,7 +85,7 @@ pub(crate) fn build_rss(config: &config::Config) -> std::io::Result<()> {
 
       let mut description = XMLElement::new("description");
 
-      let file_content = fs::read_to_string(format!("./out/blog/{}", &file_name.replace("-write.md", ".html"))).unwrap().replace("\n", "");
+      let file_content = fs::read_to_string(format!("./out/blog/{}", &file_name.replace(&config.file_suffix, ".html"))).unwrap().replace("\n", "");
       let remove_head_regex = Regex::new("^.*</h1> ").unwrap();
       let remove_trail_regex = Regex::new("</div></body></html>").unwrap();
       let fix_images_regex = Regex::new("<img src=\".").unwrap();
@@ -107,7 +107,7 @@ pub(crate) fn build_rss(config: &config::Config) -> std::io::Result<()> {
       rss_item.add_child(author);
 
       let mut pub_date = XMLElement::new("pubDate");
-      pub_date.add_text(get_file_date(file_entry).unwrap());
+      pub_date.add_text(get_file_date(file_entry, &config).unwrap());
       rss_item.add_child(pub_date);
 
       channel.add_child(rss_item)

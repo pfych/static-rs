@@ -17,7 +17,7 @@ pub(crate) fn build_blogs(config: &config::Config) -> std::io::Result<()> {
 
     if file_name.contains(".md") {
       let mut output_file: PathBuf = PathBuf::from(&output_folder);
-      output_file.push(file_name.replace("-write.md", ".html"));
+      output_file.push(file_name.replace(&config.file_suffix, ".html"));
 
       pandoc.add_input(&file_path);
       pandoc.set_output(OutputKind::File(output_file));

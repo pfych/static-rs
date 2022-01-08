@@ -6,7 +6,8 @@ pub(crate) struct Config {
   pub blog_template: String,
   pub image_location: String,
   pub url: String,
-  pub author: String
+  pub author: String,
+  pub file_suffix: String,
 }
 
 pub(crate) fn load_env() -> Config {
@@ -33,6 +34,10 @@ pub(crate) fn load_env() -> Config {
       Ok(val) => val,
       Err(_e) => String::from("")
     },
+    file_suffix: match env::var("FILE_SUFFIX") {
+      Ok(val) => val,
+      Err(_e) => String::from("")
+    }
   };
 
   return config;
