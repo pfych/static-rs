@@ -1,8 +1,8 @@
 {
   "blog_location": "/home/pfych/Documents/Scratchpad-write",
+  "image_location": "/home/pfych/Documents/Scratchpad-write/images",
   "blog_template": "./template/blog/index.html",
   "index_template": "./template/index.html",
-  "image_location": "/home/pfych/Documents/Scratchpad-write/images",
   "author": "pfych",
   "url": "https://pfy.ch",
   "file_suffix": "-write.md"
