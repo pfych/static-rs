@@ -16,6 +16,8 @@ fn build_out_structure() {
 fn main() {
   let config = config::load_env();
 
+  println!("Loaded config:\n{:?}\n", config);
+
   build_out_structure();
   blogs::build_blogs(&config).unwrap();
   blogs::build_index(&config).unwrap();
