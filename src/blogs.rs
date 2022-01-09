@@ -46,7 +46,6 @@ pub(crate) fn build_index(config: &config::Config) -> std::io::Result<()> {
     let file_name = file_entry.file_name().into_string().unwrap();
     let file_path = file_entry.path();
 
-
     if file_name.contains(".md") {
       let draft = utils::get_metadata(&file_path, "draft");
       if draft.len() != 0 { continue };

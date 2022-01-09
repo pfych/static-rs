@@ -1,18 +1,22 @@
 use std::fs::{DirEntry, File};
-use chrono::{Local, NaiveDateTime};
-use std::ops::Sub;
+use chrono::{NaiveDateTime};
 use crate::{config, utils};
 use simple_xml_builder::XMLElement;
 use std::{fs};
 use regex::Regex;
 use crate::utils::get_blogs;
+use std::time::UNIX_EPOCH;
+use chrono::TimeZone;
+use chrono_tz::Australia::Sydney;
 
 fn get_file_date(file_entry: DirEntry, config: &config::Config) -> std::io::Result<String> {
   let file_name = file_entry.file_name().into_string().unwrap();
-
-  let edit_time_unix = Local::now().timestamp().sub(file_entry.metadata()?.modified()?.elapsed().unwrap().as_secs() as i64);
-  let edit_time_native = NaiveDateTime::from_timestamp(edit_time_unix, 0);
-  let edit_time = edit_time_native.format("%H:%M:%S +1000").to_string();
+  let edit_time_unix: i64 = (file_entry.metadata()?.modified()
+    .unwrap()
+    .duration_since(UNIX_EPOCH)
+    .unwrap()
+    .as_secs() * 1000) as i64;
+  let edit_time = Sydney.timestamp_millis(edit_time_unix).format("%H:%M:%S %z").to_string();
 
   let timestamp = [&file_name.replace(&config.file_suffix, "").replace("-", " "), "00:00:00"].join(" ");
   let create_date = match NaiveDateTime::parse_from_str(&timestamp, "%y %m %d %H:%M:%S") {
