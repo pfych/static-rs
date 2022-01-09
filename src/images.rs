@@ -11,7 +11,7 @@ fn resize(in_path: &str, out_path: &str, width: u32) {
   }
 }
 
-pub(crate) fn build_images(config: config::Config) -> std::io::Result<()> {
+pub fn build_images(config: config::Config) -> std::io::Result<()> {
   println!("Building images");
 
   let mut threads: Vec<_> = Vec::new();

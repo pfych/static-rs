@@ -1,6 +1,6 @@
 use std::{env, fs};
 
-pub(crate) struct Config {
+pub struct Config {
   pub blog_location: String,
   pub blog_template: String,
   pub index_template: String,
@@ -10,7 +10,7 @@ pub(crate) struct Config {
   pub file_suffix: String,
 }
 
-pub(crate) fn load_env() -> Config {
+pub fn load_env() -> Config {
   let file = fs::File::open(match env::var("STATIC_RS_CONFIG") {
     Ok(val) => val,
     Err(_e) => String::from("./config.json")

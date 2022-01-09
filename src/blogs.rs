@@ -7,7 +7,7 @@ use std::fs::File;
 use std::io::Write;
 use crate::utils::get_blogs;
 
-pub(crate) fn build_blogs(config: &config::Config) -> std::io::Result<()> {
+pub fn build_blogs(config: &config::Config) -> std::io::Result<()> {
   println!("Building blog html");
   let output_folder: PathBuf = PathBuf::from("./out/blog");
   let pandoc_template = PathBuf::from(&config.blog_template);
@@ -35,7 +35,7 @@ pub(crate) fn build_blogs(config: &config::Config) -> std::io::Result<()> {
   Ok(())
 }
 
-pub(crate) fn build_index(config: &config::Config) -> std::io::Result<()> {
+pub fn build_index(config: &config::Config) -> std::io::Result<()> {
   println!("Creating TOC");
 
   let contents = fs::read_to_string(&config.index_template).expect("Index file should be valid html");

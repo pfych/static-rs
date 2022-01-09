@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use crate::config;
 use regex::Regex;
 
-pub(crate) fn get_metadata(file: &PathBuf, meta: &str) -> String {
+pub fn get_metadata(file: &PathBuf, meta: &str) -> String {
   let md_file = File::open(&file).unwrap();
   let md_lines = io::BufReader::new(md_file);
   let mut val = "".to_string();
@@ -21,7 +21,7 @@ pub(crate) fn get_metadata(file: &PathBuf, meta: &str) -> String {
   return val
 }
 
-pub(crate) fn get_blogs(config: &config::Config) -> Vec<DirEntry> {
+pub fn get_blogs(config: &config::Config) -> Vec<DirEntry> {
   let mut paths: Vec<_> = fs::read_dir(&config.blog_location).unwrap()
     .map(|r| r.unwrap())
     .collect();

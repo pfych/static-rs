@@ -27,7 +27,7 @@ fn get_file_date(file_entry: DirEntry, config: &config::Config) -> std::io::Resu
   Ok([&create_date, &edit_time, ""].join(" "))
 }
 
-pub(crate) fn build_rss(config: &config::Config) -> std::io::Result<()> {
+pub fn build_rss(config: &config::Config) -> std::io::Result<()> {
   println!("Building rss");
 
   let rss_file = File::create("./out/rss.xml")?;
