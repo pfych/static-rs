@@ -5,6 +5,7 @@ pub struct Config {
   pub blog_location: String,
   pub blog_template: String,
   pub index_template: String,
+  pub image_page_template: String,
   pub image_location: String,
   pub url: String,
   pub author: String,

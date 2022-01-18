@@ -12,6 +12,7 @@ Create a `config.json` file:
   "image_location": "/home/pfych/Documents/Scratchpad-write/images",
   "blog_template": "./template/blog/index.html",
   "index_template": "./template/index.html",
+  "image_page_template": "./template/images.html",
   "author": "pfych",
   "url": "https://pfy.ch",
   "file_suffix": "-write.md"
@@ -22,6 +23,7 @@ Create a `config.json` file:
 - `image_location`: Where are images for the blog stored  
 - `blog_template`: Pandoc html template for blogs  
 - `index_template`: index html, Table of contents will be injected wherever the string `TOC` is.  
+- `image_page_template`: html file to display an image gallery on.
 - `author`: Who should `rss` report the author as  
 - `url`: What url will this run behind (for `rss`)  
 - `file_suffix`: what does the blog file end with?
