@@ -18,7 +18,7 @@ fn get_file_date(file_entry: DirEntry, config: &config::Config) -> std::io::Resu
     .as_secs() * 1000) as i64;
   let edit_time = Sydney.timestamp_millis(edit_time_unix).format("%H:%M:%S %z").to_string();
 
-  let timestamp = [&file_name.replace(&config.file_suffix, "").replace("-", " "), "00:00:00"].join(" ");
+  let timestamp = [&file_name.replace(&config.file_suffix, "").replace('-', " "), "00:00:00"].join(" ");
   let create_date = match NaiveDateTime::parse_from_str(&timestamp, "%y %m %d %H:%M:%S") {
     Ok(time) => time.format("%a, %d %b %Y").to_string(),
     Err(e) => ["Err", &e.to_string()].join(" ")
@@ -56,14 +56,14 @@ pub fn build_rss(config: &config::Config) -> std::io::Result<()> {
   channel.add_child(atom);
 
 
-  for entry in get_blogs(&config) {
+  for entry in get_blogs(config) {
     let file_entry = entry;
     let file_name = file_entry.file_name().into_string().unwrap();
     let file_path = file_entry.path();
 
     if file_name.contains(".md") {
       let draft = utils::get_metadata(&file_path, "draft");
-      if draft.len() != 0 {
+      if !draft.is_empty() {
         continue;
       }
 
@@ -84,7 +84,7 @@ pub fn build_rss(config: &config::Config) -> std::io::Result<()> {
 
       let mut description = XMLElement::new("description");
 
-      let file_content = fs::read_to_string(format!("./out/blog/{}", &file_name.replace(&config.file_suffix, ".html"))).unwrap().replace("\n", "");
+      let file_content = fs::read_to_string(format!("./out/blog/{}", &file_name.replace(&config.file_suffix, ".html"))).unwrap().replace('\n', "");
       let remove_head_regex = Regex::new("^.*</h1> ").unwrap();
       let remove_trail_regex = Regex::new("</div></body></html>").unwrap();
       let fix_images_regex = Regex::new("<img src=\".").unwrap();
@@ -106,7 +106,7 @@ pub fn build_rss(config: &config::Config) -> std::io::Result<()> {
       rss_item.add_child(author);
 
       let mut pub_date = XMLElement::new("pubDate");
-      pub_date.add_text(get_file_date(file_entry, &config).unwrap());
+      pub_date.add_text(get_file_date(file_entry, config).unwrap());
       rss_item.add_child(pub_date);
 
       channel.add_child(rss_item)

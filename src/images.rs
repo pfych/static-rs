@@ -36,9 +36,9 @@ pub fn build_images(config: config::Config) -> std::io::Result<()> {
     }))
   };
 
- for thread in threads {
-   thread.join().unwrap()
- }
+  for thread in threads {
+    thread.join().unwrap()
+  }
 
   Ok(())
 }

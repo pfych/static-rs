@@ -1,11 +1,11 @@
 use std::fs::{File, DirEntry};
 use std::{io, fs};
 use std::io::BufRead;
-use std::path::PathBuf;
+use std::path::{Path};
 use crate::config;
 use regex::Regex;
 
-pub fn get_metadata(file: &PathBuf, meta: &str) -> String {
+pub fn get_metadata(file: &Path, meta: &str) -> String {
   let md_file = File::open(&file).unwrap();
   let md_lines = io::BufReader::new(md_file);
   let mut val = "".to_string();
@@ -18,7 +18,7 @@ pub fn get_metadata(file: &PathBuf, meta: &str) -> String {
     }
   }
 
-  return val
+  val
 }
 
 pub fn get_blogs(config: &config::Config) -> Vec<DirEntry> {
@@ -28,5 +28,5 @@ pub fn get_blogs(config: &config::Config) -> Vec<DirEntry> {
 
   paths.sort_by_key(|dir| dir.path());
 
-  return paths;
+  paths
 }
