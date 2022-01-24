@@ -45,7 +45,7 @@ pub fn build_images(config: config::Config) -> std::io::Result<()> {
 
       if !Path::new(&output_file).exists() {
         println!("Resizing {}", &file_name);
-        resize(file_path.to_str().unwrap(), output_file.to_str().unwrap(), 720);
+        resize(file_path.to_str().unwrap(), output_file.to_str().unwrap(), 1920);
         println!("Completed Resizing {}", &file_name);
       }
     }))
