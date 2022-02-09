@@ -24,11 +24,7 @@ pub fn build_images(config: config::Config) -> std::io::Result<()> {
     let re = Regex::new(".JPG").unwrap();
 
     images.push(format!(
-      "<a id=\"{}\" href=\"#{}\"><div id=\"{}\" class=\"anchor\"></div><img src=\"./blog/images/{}\" alt=\"{}\" /></a>",
-      re.replace(&file_name, ".jpg"),
-      re.replace(&file_name, ".jpg"),
-      re.replace(&file_name, ".jpg"),
-      re.replace(&file_name, ".jpg"),
+      "<a id=\"{0}\" href=\"#{0}\"><div id=\"{0}\" class=\"anchor\"></div><img src=\"./blog/images/{0}\" alt=\"{0}\" /></a>",
       re.replace(&file_name, ".jpg")
     ));
 
