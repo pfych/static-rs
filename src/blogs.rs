@@ -40,7 +40,7 @@ pub fn build_index(config: &config::Config) -> std::io::Result<()> {
 
   let contents = fs::read_to_string(&config.index_template).expect("Index file should be readable");
 
-  let mut toc = Vec::new();
+  let mut toc: Vec<String> = Vec::new();
   for entry in get_blogs(config) {
     let file_entry = entry;
     let file_name = file_entry.file_name().into_string().expect("File should have a valid name");
@@ -53,7 +53,12 @@ pub fn build_index(config: &config::Config) -> std::io::Result<()> {
       let title = utils::get_metadata(&file_path, "title");
       let url = format!("./blog/{}.html", file_name.replace(&config.file_suffix, ""));
 
-      toc.push(format!("<a href=\"{}\">{} - {}</a>", url, file_name.replace(&config.file_suffix, ""), title))
+      let mut category = utils::get_metadata(&file_path, "category");
+      if category.is_empty() {
+        category = String::from("📄")
+      }
+
+      toc.push(format!("<a href=\"{1}\">{2} {0} <span class=\"name\">{3}</span></a>", category, url, file_name.replace(&config.file_suffix, ""), title))
     }
   }
 
