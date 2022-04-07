@@ -1,5 +1,5 @@
 use pandoc::OutputKind;
-use pandoc::PandocOption::Template;
+use pandoc::PandocOption::{Template, TableOfContents};
 use std::path::PathBuf;
 use std::{fs};
 use crate::{config, utils};
@@ -25,6 +25,7 @@ pub fn build_blogs(config: &config::Config) -> std::io::Result<()> {
       pandoc.add_input(&file_path);
       pandoc.set_output(OutputKind::File(output_file));
       pandoc.add_option(Template(pandoc_template.to_path_buf()));
+      pandoc.add_option(TableOfContents);
       match pandoc.execute() {
         Ok(_t) => {}
         Err(e) => println!("Error {}", e)
